@@ -1,0 +1,49 @@
+{
+  "name": "ns-trading-server",
+  "version": "0.0.1",
+  "description": "node-stock trading-server app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/node-stock/ns-trading-server"
+  },
+  "license": "GPL3",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "start": "node dist/index.js",
+    "start:watch": "nodemon",
+    "rm": "rimraf dist",
+    "tsc": "npm run rm && tsc -p tsconfig.development.json",
+    "tslint": "tslint --project ./tslint.json",
+    "test": "cross-env NODE_ENV=test mocha dist/**/*.test.js --timeout 3000 --require intelli-espower-loader",
+    "prepare": "npm run rm && tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "toml": "^2.3.3"
+  },
+  "devDependencies": {
+    "@types/config": "0.0.33",
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^8.0.20",
+    "@types/power-assert": "^1.4.29",
+    "config": "^1.26.1",
+    "cross-env": "^5.1.0",
+    "debug": "^3.1.0",
+    "intelli-espower-loader": "^1.0.1",
+    "mocha": "^3.5.0",
+    "nodemon": "^1.12.1",
+    "mysql2": "^1.4.2",
+    "power-assert": "^1.4.4",
+    "ts-node": "^3.3.0",
+    "tslint": "^5.6.0",
+    "typescript": "^2.6.1",
+    "@nestjs/core": "^4.4.2",
+    "@nestjs/common": "^4.4.2",
+    "@nestjs/microservices": "^4.4.1",
+    "@nestjs/websockets": "^4.4.1",
+    "@nestjs/testing": "^4.4.1",
+    "reflect-metadata": "^0.1.10",
+    "rimraf": "^2.6.2",
+    "rxjs": "^5.5.2"
+  }
+}

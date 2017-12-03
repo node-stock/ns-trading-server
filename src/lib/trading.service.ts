@@ -15,6 +15,7 @@ export class TradingService {
 
   constructor() {
     this.trader = new WebTrader(config);
+    this.trader.init();
   }
 
   async order(orderInfo: types.LimitOrder) {
@@ -30,12 +31,18 @@ export class TradingService {
       // 卖出多单
       await this.trader.sell(orderInfo);
     } else if (orderInfo.side === types.OrderSide.Sell) {
+      Log.system.error('买入空单，尚未实现！');
       // 买入空单
       // TODO
     } else if (orderInfo.side === types.OrderSide.SellClose) {
+      Log.system.error('卖出空单，尚未实现！');
       // 卖出空单
       // TODO
     }
     Log.system.info('下单[终了]');
+  }
+
+  destroy() {
+    this.trader.end();
   }
 }

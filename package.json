@@ -1,6 +1,6 @@
 {
   "name": "ns-trading-server",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "node-stock trading-server app",
   "repository": {
     "type": "git",
@@ -21,9 +21,10 @@
     "prepare": "npm run rm && tsc -p tsconfig.json"
   },
   "dependencies": {
+    "node-bitbankcc": "^1.0.1",
     "ns-common": "0.0.11",
     "ns-trader": "0.0.10",
-    "ns-types": "0.0.19",
+    "ns-types": "0.0.26",
     "toml": "^2.3.3"
   },
   "devDependencies": {

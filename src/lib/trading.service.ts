@@ -2,6 +2,7 @@ import { Component } from '@nestjs/common';
 import { HttpException } from '@nestjs/core';
 
 import * as types from 'ns-types';
+import { OrderManager } from 'ns-manager';
 import { Log } from 'ns-common';
 import { WebTrader } from 'ns-trader';
 
@@ -27,10 +28,11 @@ export class TradingService {
         Log.system.info('测试模式，下单[终了] ');
         return;
       }
+      let res;
       if (orderInfo.side === types.OrderSide.Buy) {
         // 买入多单
         if (orderInfo.symbol.indexOf('_') !== 1) {
-          const res = await priApi.order(orderInfo.symbol, orderInfo.price,
+          res = await priApi.order(orderInfo.symbol, orderInfo.price,
             orderInfo.amount, orderInfo.side, orderInfo.orderType);
           Log.system.info('买入多单结果：', JSON.stringify(res));
         } else {
@@ -42,7 +44,7 @@ export class TradingService {
           const free_amount = Number((await priApi.getAsset())['assets'][1]['free_amount']);
           const amount = free_amount < orderInfo.amount ? free_amount : orderInfo.amount;
 
-          const res = await priApi.order(orderInfo.symbol, orderInfo.price,
+          res = await priApi.order(orderInfo.symbol, orderInfo.price,
             amount, types.OrderSide.Sell, orderInfo.orderType);
           Log.system.info('卖出多单结果：', JSON.stringify(res));
         } else {
@@ -56,6 +58,15 @@ export class TradingService {
         Log.system.error('卖出空单，尚未实现！');
         // 卖出空单
         // TODO
+      }
+      if (res['order_id']) {
+        const order: types.Model.Order = Object.assign({}, orderInfo, {
+          id: res['order_id'],
+          account_id: 'coin',
+          quantity: orderInfo.amount,
+          status: types.OrderStatus.Unfilled
+        });
+        await OrderManager.set(order);
       }
       Log.system.info('下单[终了]');
     } catch (e) {

@@ -23,7 +23,7 @@ export class TradingService {
     this.trader.init();
   }
 
-  async order(accountId: string, orderInfo: types.Order) {
+  async order(orderInfo: types.Order) {
     const bitbank = new Bitbank({
       apiKey: config.trader.apiKey,
       apiSecret: config.trader.secret
@@ -31,19 +31,36 @@ export class TradingService {
     try {
       Log.system.info('下单[启动] ', orderInfo);
       let amount = Number(orderInfo.amount);
-      // if (orderInfo.backtest !== '1') {
 
       if (orderInfo.side === types.OrderSide.Buy) {
         // 买入多单
         if (orderInfo.symbolType === types.SymbolType.cryptocoin) {
-          const res = await bitbank.createOrder({
-            pair: orderInfo.symbol,
-            amount,
-            price: Number(orderInfo.price),
-            side: types.OrderSide.Buy,
-            type: orderInfo.orderType
-          }).toPromise();
-          Log.system.info('买入多单结果：', JSON.stringify(res, null, 2));
+          let res: BitbankApiOrder;
+          if (orderInfo.backtest !== '1') {
+            res = await bitbank.createOrder({
+              pair: orderInfo.symbol,
+              amount,
+              price: Number(orderInfo.price),
+              side: types.OrderSide.Buy,
+              type: orderInfo.orderType
+            }).toPromise();
+            Log.system.info('买入多单结果：', JSON.stringify(res, null, 2));
+          } else {
+            res = {
+              order_id: Date.now(),
+              pair: orderInfo.symbol,
+              side: orderInfo.side,
+              type: orderInfo.orderType,
+              start_amount: orderInfo.amount,
+              remaining_amount: orderInfo.amount,
+              executed_amount: orderInfo.amount,
+              price: orderInfo.price,
+              average_price: orderInfo.price,
+              ordered_at: Date.now(),
+              status: types.OrderStatus.FullyFilled
+            }
+            Log.system.info('模拟买入多单结果：', JSON.stringify(res, null, 2));
+          }
           // 记录订单
           await this.saveRecord(res, orderInfo);
         } else {
@@ -59,14 +76,33 @@ export class TradingService {
           const freeAmount = new BigNumber(asset.free_amount);
           const orderAmount = new BigNumber(orderInfo.amount);
           amount = freeAmount.lessThan(orderAmount) ? freeAmount.toNumber() : orderAmount.toNumber();
-          const res = await bitbank.createOrder({
-            pair: orderInfo.symbol,
-            amount,
-            price: Number(orderInfo.price),
-            side: types.OrderSide.Sell,
-            type: orderInfo.orderType
-          }).toPromise();
-          Log.system.info('卖出多单结果：', JSON.stringify(res, null, 2));
+
+          let res: BitbankApiOrder;
+          if (orderInfo.backtest !== '1') {
+            res = await bitbank.createOrder({
+              pair: orderInfo.symbol,
+              amount,
+              price: Number(orderInfo.price),
+              side: types.OrderSide.Sell,
+              type: orderInfo.orderType
+            }).toPromise();
+            Log.system.info('卖出多单结果：', JSON.stringify(res, null, 2));
+          } else {
+            res = {
+              order_id: Date.now(),
+              pair: orderInfo.symbol,
+              side: types.OrderSide.Sell,
+              type: orderInfo.orderType,
+              start_amount: orderInfo.amount,
+              remaining_amount: orderInfo.amount,
+              executed_amount: orderInfo.amount,
+              price: orderInfo.price,
+              average_price: orderInfo.price,
+              ordered_at: Date.now(),
+              status: types.OrderStatus.FullyFilled
+            }
+            Log.system.info('模拟卖出多单结果：', JSON.stringify(res, null, 2));
+          }
           // 记录订单
           await this.saveRecord(res, orderInfo);
         } else {
@@ -81,7 +117,6 @@ export class TradingService {
         // 卖出空单
         // TODO
       }
-      // }
       Log.system.info('下单[终了]');
     } catch (e) {
       Log.system.error('下单异常[终了] ', e.stack);
@@ -91,7 +126,8 @@ export class TradingService {
   async saveRecord(order: BitbankApiOrder, srcOrder: types.Order) {
     const dbOrder: types.Model.Order = {
       id: String(order.order_id),
-      account_id: 'coin',
+      account_id: srcOrder.account_id,
+      signal_id: srcOrder.signal_id,
       quantity: order.start_amount,
       price: order.price,
       status: types.OrderStatus.Unfilled,

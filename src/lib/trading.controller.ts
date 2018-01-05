@@ -8,8 +8,8 @@ export class TradingController {
   constructor(private tradingService: TradingService) { }
 
   @Post('order')
-  async order( @Response() res, @Body('accountId') accountId, @Body('orderInfo') orderInfo) {
-    await this.tradingService.order(accountId, orderInfo);
+  async order( @Response() res, @Body('orderInfo') orderInfo) {
+    await this.tradingService.order(orderInfo);
     res.status(HttpStatus.OK).send();
   }
 }

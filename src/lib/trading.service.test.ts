@@ -8,6 +8,7 @@ const config = require('config');
 const tradingServ = new TradingService();
 const testBuy = async () => {
   const order: types.LimitOrder = {
+    account_id: 'test',
     price: '1630063',
     symbol: 'btc_jpy',
     symbolType: types.SymbolType.cryptocoin,
@@ -18,11 +19,12 @@ const testBuy = async () => {
     eventType: types.EventType.Order,
     backtest: '1'
   };
-  await tradingServ.order('test', order);
+  await tradingServ.order(order);
 }
 
 const testSell = async () => {
   const order: types.LimitOrder = {
+    account_id: 'test',
     price: '1680063',
     symbol: 'btc_jpy',
     symbolType: types.SymbolType.cryptocoin,
@@ -33,11 +35,12 @@ const testSell = async () => {
     eventType: types.EventType.Order,
     backtest: '1'
   };
-  await tradingServ.order('test', order);
+  await tradingServ.order(order);
 }
 
 const testSaveRecord = async () => {
   const srcOrder: types.Order = {
+    account_id: 'test',
     symbol: types.Pair.BTC_JPY,
     price: '1675000',
     amount: '0.00421125',

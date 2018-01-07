@@ -7,7 +7,7 @@ import { BitbankApiOrder } from 'bitbank-handler';
 const config = require('config');
 const tradingServ = new TradingService();
 const testBuy = async () => {
-  const order: types.LimitOrder = {
+  const order: types.Order = {
     account_id: 'test',
     price: '1630063',
     symbol: 'btc_jpy',
@@ -23,7 +23,7 @@ const testBuy = async () => {
 }
 
 const testSell = async () => {
-  const order: types.LimitOrder = {
+  const order: types.Order = {
     account_id: 'test',
     price: '1680063',
     symbol: 'btc_jpy',

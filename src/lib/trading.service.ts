@@ -42,7 +42,7 @@ export class TradingService {
               amount,
               price: Number(orderInfo.price),
               side: types.OrderSide.Buy,
-              type: orderInfo.orderType
+              type: Util.getBitbankOrderType(orderInfo.orderType)
             }).toPromise();
             Log.system.info('买入多单结果：', JSON.stringify(res, null, 2));
           } else {
@@ -50,7 +50,7 @@ export class TradingService {
               order_id: Date.now(),
               pair: orderInfo.symbol,
               side: orderInfo.side,
-              type: orderInfo.orderType,
+              type: Util.getBitbankOrderType(orderInfo.orderType),
               start_amount: orderInfo.amount,
               remaining_amount: orderInfo.amount,
               executed_amount: orderInfo.amount,
@@ -84,7 +84,7 @@ export class TradingService {
               amount,
               price: Number(orderInfo.price),
               side: types.OrderSide.Sell,
-              type: orderInfo.orderType
+              type: Util.getBitbankOrderType(orderInfo.orderType)
             }).toPromise();
             Log.system.info('卖出多单结果：', JSON.stringify(res, null, 2));
           } else {
@@ -92,7 +92,7 @@ export class TradingService {
               order_id: Date.now(),
               pair: orderInfo.symbol,
               side: types.OrderSide.Sell,
-              type: orderInfo.orderType,
+              type: Util.getBitbankOrderType(orderInfo.orderType),
               start_amount: orderInfo.amount,
               remaining_amount: orderInfo.amount,
               executed_amount: orderInfo.amount,
@@ -134,6 +134,7 @@ export class TradingService {
       side: srcOrder.side,
       symbol: order.pair,
       type: srcOrder.symbolType,
+      order_type: srcOrder.orderType,
       backtest: srcOrder.backtest,
       mocktime: srcOrder.mocktime
     };
